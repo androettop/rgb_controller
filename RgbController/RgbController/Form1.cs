@@ -97,7 +97,7 @@ namespace RgbController
                     serialPort.PortName = portName;
                     serialPort.Open();
                 }
-                serialPort.Write(effect);
+                serialPort.WriteLine(effect);
             }
             catch
             {
