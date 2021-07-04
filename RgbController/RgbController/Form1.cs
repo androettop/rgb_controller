@@ -17,6 +17,11 @@ namespace RgbController
             portName = value;
             settings.Write("portName", value);
             String initialColor = settings.Read("color");
+            String initialEffect = settings.Read("effect");
+            if (initialEffect.Length > 0)
+            {
+                setEffect(initialEffect);
+            }
             if (initialColor.Length > 0)
             {
                 setColor(initialColor);
@@ -41,6 +46,9 @@ namespace RgbController
             ToolStripMenuItem changeColor = new ToolStripMenuItem();
             ToolStripMenuItem exit = new ToolStripMenuItem();
             ToolStripMenuItem update = new ToolStripMenuItem();
+            ToolStripMenuItem fixedFX = new ToolStripMenuItem();
+            ToolStripMenuItem breathFX = new ToolStripMenuItem();
+            ToolStripMenuItem rainbowFX = new ToolStripMenuItem();
 
             changeColor.Name = "changeColor";
             changeColor.Text = "Cambiar color";
@@ -48,10 +56,19 @@ namespace RgbController
             update.Name = "update";
             update.Text = "Actualizar";
 
+            fixedFX.Name = "fixedFX";
+            fixedFX.Text = "Color fijo";
+
+            breathFX.Name = "breathFX";
+            breathFX.Text = "Respiración";
+
+            rainbowFX.Name = "rainbowFX";
+            rainbowFX.Text = "Arcoiris";
+
             exit.Name = "exit";
             exit.Text = "Salir y apagar";
 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] {changeColor,update});
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] {changeColor,update,fixedFX,breathFX,rainbowFX});
             
             String[] ports = SerialPort.GetPortNames();
             ToolStripItemCollection newItems = new ToolStripItemCollection(contextMenuStrip1,originalItemList);
@@ -64,6 +81,28 @@ namespace RgbController
                 contextMenuStrip1.Items.Add(item);
             }
             contextMenuStrip1.Items.Add(exit);
+        }
+
+        private void setEffect(String effect, Boolean save = true)
+        {
+            try
+            {
+                if (save)
+                {
+                    settings.Write("effect", effect);
+                }
+                if (!serialPort.IsOpen)
+                {
+                    serialPort.BaudRate = 9600;
+                    serialPort.PortName = portName;
+                    serialPort.Open();
+                }
+                serialPort.Write(effect);
+            }
+            catch
+            {
+                MessageBox.Show("No se pudo conectar :(");
+            }
         }
 
         private void setColor(String colorStr, Boolean save = true)
@@ -98,6 +137,7 @@ namespace RgbController
 
         private void RgbController_FormClosing(object sender, FormClosingEventArgs e)
         {
+            setEffect("0", false);
             setColor(Color.Black, false);
         }
 
@@ -115,8 +155,17 @@ namespace RgbController
                 Application.Exit();
             } else if (e.ClickedItem.Name == "update") {
                 updatePorts();
-            }else if(e.ClickedItem.Tag != null && e.ClickedItem.Tag.Equals("port")) {
+            } else if(e.ClickedItem.Tag != null && e.ClickedItem.Tag.Equals("port")) {
                 setPortName(e.ClickedItem.Text);
+            } else if (e.ClickedItem.Name != null && e.ClickedItem.Name.Equals("fixedFX"))
+            {
+                setEffect("0");
+            } else if (e.ClickedItem.Name != null && e.ClickedItem.Name.Equals("breathFX"))
+            {
+                setEffect("1");
+            } else if (e.ClickedItem.Name != null && e.ClickedItem.Name.Equals("rainbowFX"))
+            {
+                setEffect("2");
             }
         }
 
