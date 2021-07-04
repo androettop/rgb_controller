@@ -32,10 +32,9 @@ namespace RgbController
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RgbController));
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.changeColor = new System.Windows.Forms.ToolStripMenuItem();
-            this.exit = new System.Windows.Forms.ToolStripMenuItem();
+           
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -46,30 +45,16 @@ namespace RgbController
             this.notifyIcon1.Text = "Controlador RGB";
             this.notifyIcon1.Visible = true;
             // 
-            // timer1
-            // 
-            this.timer1.Interval = 5000;
-            // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.changeColor,
-            this.exit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(150, 48);
             this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
+           
             // 
-            // changeColor
+            // timer1
             // 
-            this.changeColor.Name = "changeColor";
-            this.changeColor.Size = new System.Drawing.Size(149, 22);
-            this.changeColor.Text = "Cambiar color";
-            // 
-            // exit
-            // 
-            this.exit.Name = "exit";
-            this.exit.Size = new System.Drawing.Size(149, 22);
-            this.exit.Text = "Salir y apagar";
+            this.timer1.Interval = 5000;
             // 
             // RgbController
             // 
@@ -77,6 +62,7 @@ namespace RgbController
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(0, 0);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "RgbController";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

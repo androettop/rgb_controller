@@ -9,15 +9,70 @@ namespace RgbController
     {
         SerialPort serialPort = new SerialPort();
         IniFile settings = new IniFile();
+        String _portName = "";
+        ToolStripItem[] originalItemList = { };
+
+        String portName
+        {
+            get {
+                return _portName;
+            }
+            set
+            {
+                _portName = value;
+                settings.Write("portName", value);
+                String initialColor = settings.Read("color");
+                if (initialColor.Length > 0)
+                {
+                    setColor(initialColor);
+                }
+            }
+        }
 
         public RgbController()
         {
             InitializeComponent();
-            String initialColor = settings.Read("color");
-            if(initialColor.Length > 0)
+            portName = settings.Read("portName");
+            if( portName.Length <= 0)
             {
-                setColor(initialColor);
+                portName = SerialPort.GetPortNames()[0];
             }
+            updatePorts();
+        }
+
+        private void updatePorts()
+        {
+            this.contextMenuStrip1.Items.Clear();
+
+            ToolStripMenuItem changeColor = new ToolStripMenuItem();
+            ToolStripMenuItem exit = new ToolStripMenuItem();
+            ToolStripMenuItem update = new ToolStripMenuItem();
+
+            changeColor.Name = "changeColor";
+            changeColor.Text = "Cambiar color";
+
+            update.Name = "update";
+            update.Text = "Actualizar";
+
+            exit.Name = "exit";
+            exit.Text = "Salir y apagar";
+
+            this.contextMenuStrip1.Items.AddRange(new ToolStripItem[] {
+            changeColor,update});
+            
+            String[] ports = SerialPort.GetPortNames();
+            ToolStripItemCollection newItems = new ToolStripItemCollection(contextMenuStrip1,originalItemList);
+            for (int i = 0; i < ports.Length; i++)
+            {
+                String portName = ports[i];
+                ToolStripItem item = new ToolStripMenuItem();
+                item.Text = portName;
+                item.Tag = "port";
+                this.contextMenuStrip1.Items.AddRange(new ToolStripItem[] {
+                item});
+            }
+            this.contextMenuStrip1.Items.AddRange(new ToolStripItem[] {
+            exit});
         }
 
         private void setColor(String colorStr, Boolean save = true)
@@ -61,8 +116,14 @@ namespace RgbController
                 {
                     setColor(dialog.Color);
                 }
-            } else if (e.ClickedItem.Name == "exit") {
+            }
+            else if (e.ClickedItem.Name == "exit")
+            {
                 Application.Exit();
+            } else if (e.ClickedItem.Name == "update") {
+                updatePorts();
+            }else if(e.ClickedItem.Tag != null && e.ClickedItem.Equals("port")) {
+                portName = e.ClickedItem.Text;
             }
         }
     }
