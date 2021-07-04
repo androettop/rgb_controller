@@ -79,8 +79,6 @@ namespace RgbController
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem changeColor;
-        private System.Windows.Forms.ToolStripMenuItem exit;
     }
 }
 
