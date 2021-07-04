@@ -74,11 +74,13 @@ namespace RgbController
                 {
                     settings.Write("color", colorStr);
                 }
-                serialPort.BaudRate = 9600;
-                serialPort.PortName = portName;
-                serialPort.Open();
+                if (!serialPort.IsOpen)
+                {
+                    serialPort.BaudRate = 9600;
+                    serialPort.PortName = portName;
+                    serialPort.Open();
+                }
                 serialPort.WriteLine(colorStr);
-                serialPort.Close();
             }
             catch
             {
@@ -113,8 +115,16 @@ namespace RgbController
                 Application.Exit();
             } else if (e.ClickedItem.Name == "update") {
                 updatePorts();
-            }else if(e.ClickedItem.Tag != null && e.ClickedItem.Equals("port")) {
+            }else if(e.ClickedItem.Tag != null && e.ClickedItem.Tag.Equals("port")) {
                 setPortName(e.ClickedItem.Text);
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (serialPort.IsOpen)
+            {
+                serialPort.Close();
             }
         }
     }
