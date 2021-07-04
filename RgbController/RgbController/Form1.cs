@@ -9,40 +9,34 @@ namespace RgbController
     {
         SerialPort serialPort = new SerialPort();
         IniFile settings = new IniFile();
-        String _portName = "";
+        String portName = "";
         ToolStripItem[] originalItemList = { };
 
-        String portName
+        public void setPortName(String value) 
         {
-            get {
-                return _portName;
-            }
-            set
+            portName = value;
+            settings.Write("portName", value);
+            String initialColor = settings.Read("color");
+            if (initialColor.Length > 0)
             {
-                _portName = value;
-                settings.Write("portName", value);
-                String initialColor = settings.Read("color");
-                if (initialColor.Length > 0)
-                {
-                    setColor(initialColor);
-                }
+                setColor(initialColor);
             }
         }
 
         public RgbController()
         {
             InitializeComponent();
-            portName = settings.Read("portName");
+            setPortName(settings.Read("portName"));
             if( portName.Length <= 0)
             {
-                portName = SerialPort.GetPortNames()[0];
+                setPortName(SerialPort.GetPortNames()[0]);
             }
             updatePorts();
         }
 
         private void updatePorts()
         {
-            this.contextMenuStrip1.Items.Clear();
+            contextMenuStrip1.Items.Clear();
 
             ToolStripMenuItem changeColor = new ToolStripMenuItem();
             ToolStripMenuItem exit = new ToolStripMenuItem();
@@ -57,8 +51,7 @@ namespace RgbController
             exit.Name = "exit";
             exit.Text = "Salir y apagar";
 
-            this.contextMenuStrip1.Items.AddRange(new ToolStripItem[] {
-            changeColor,update});
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] {changeColor,update});
             
             String[] ports = SerialPort.GetPortNames();
             ToolStripItemCollection newItems = new ToolStripItemCollection(contextMenuStrip1,originalItemList);
@@ -68,11 +61,9 @@ namespace RgbController
                 ToolStripItem item = new ToolStripMenuItem();
                 item.Text = portName;
                 item.Tag = "port";
-                this.contextMenuStrip1.Items.AddRange(new ToolStripItem[] {
-                item});
+                contextMenuStrip1.Items.Add(item);
             }
-            this.contextMenuStrip1.Items.AddRange(new ToolStripItem[] {
-            exit});
+            contextMenuStrip1.Items.Add(exit);
         }
 
         private void setColor(String colorStr, Boolean save = true)
@@ -84,7 +75,7 @@ namespace RgbController
                     settings.Write("color", colorStr);
                 }
                 serialPort.BaudRate = 9600;
-                serialPort.PortName = SerialPort.GetPortNames()[0];
+                serialPort.PortName = portName;
                 serialPort.Open();
                 serialPort.WriteLine(colorStr);
                 serialPort.Close();
@@ -123,7 +114,7 @@ namespace RgbController
             } else if (e.ClickedItem.Name == "update") {
                 updatePorts();
             }else if(e.ClickedItem.Tag != null && e.ClickedItem.Equals("port")) {
-                portName = e.ClickedItem.Text;
+                setPortName(e.ClickedItem.Text);
             }
         }
     }
